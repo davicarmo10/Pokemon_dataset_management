@@ -1,5 +1,6 @@
 # main.py
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import pandas as pd
 from pokedex_dataset import load_data_pokedex
@@ -10,32 +11,78 @@ app = FastAPI()
 # ✅ Definindo o schema da requisição
 class PokemonRequest(BaseModel):
     name: str
-    top_n: int = 5
+    top_n: int = 10
 
 # ✅ Carregando dados e preparando modelo
 df_pokedex = load_data_pokedex('pokemon_recommender/data/pokemon.csv')
+df_pokedex["name"] = df_pokedex["name"].str.lower()  # Normalizando os nomes dos Pokémon
 X, pokemon_names, model, pipeline = prepare_data(df_pokedex)  # ✅
 
-@app.get("/")
+'''@app.get("/")
 def read_root():
     return {"message": "API de Recomendação Pokémon funcionando!"}
-
-@app.post("/recomendar/")
+'''
+@app.post("/recommend/")
 def recomendar(req: PokemonRequest):
-    print("Recebida requisição:", req)
-    
+    print('requisição recebida:', req)
     name = req.name
     top_n = req.top_n
 
     if name not in df_pokedex["name"].values:
-        print(f"Pokémon '{name}' não encontrado.")
         raise HTTPException(status_code=404, detail=f"Pokémon '{name}' não encontrado.")
     
-    print(f"Recomendando para {name} os top {top_n} mais próximos...")
-
     recommended = recommend_pokemon(name, top_n, df_pokedex, X, pokemon_names, model)
 
-    print("Recomendações geradas:", recommended)
-    
     return {"recomendacoes": recommended}
+
+@app.get("/", response_class=HTMLResponse)
+def home():
+    return """
+    <html>
+        <head>
+            <title>Recomendador de Pokémon</title>
+        </head>
+        <body>
+            <h2>Recomendador de Pokémon</h2>
+            <form id="form">
+                <label for="name">Nome do Pokémon:</label>
+                <input type="text" id="name" name="name" required><br><br>
+
+                <label for="top_n">Quantidade de recomendações:</label>
+                <input type="number" id="top_n" name="top_n" value="5" required><br><br>
+
+                <button type="submit">Recomendar</button>
+            </form>
+            <br>
+            <div id="result"></div>
+
+            <script>
+                document.getElementById('form').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const name = document.getElementById('name').value;
+                    const top_n = parseInt(document.getElementById('top_n').value);
+
+                    const response = await fetch('/recommend/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name: name, top_n: top_n })
+                    });
+
+                    const resultDiv = document.getElementById('result');
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        resultDiv.innerHTML = "<strong>Recomendações:</strong> " + data.recomendacoes.join(", ");
+                    } else {
+                        const error = await response.json();
+                        resultDiv.innerHTML = "<strong>Erro:</strong> " + error.detail;
+                    }
+                });
+            </script>
+        </body>
+    </html>
+    """
+
 
