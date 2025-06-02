@@ -1,8 +1,8 @@
 # main.py
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-import pandas as pd
+from fastapi.middleware.cors import CORSMiddleware
 from pokedex_dataset import load_data_pokedex
 from recommender import prepare_data, recommend_pokemon
 
@@ -34,6 +34,15 @@ def recomendar(req: PokemonRequest):
     recommended = recommend_pokemon(name, top_n, df_pokedex, X, pokemon_names, model)
 
     return {"recomendacoes": recommended}
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite todas as origens
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/", response_class=HTMLResponse)
 def home():

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Recomendador</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, button { padding: 8px; margin: 5px 0; }
+    ul { list-style: none; padding: 0; }
+    li { background: #f2f2f2; margin: 5px 0; padding: 10px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Recomendador</h1>
+  <input type="text" id="pokemon-name" placeholder="Nome" />
+  <input type="number" id="top-n" placeholder="Quantidade" value="5" />
+  <button onclick="buscarRecomendacoes()">Recomendar</button>
+
+  <h2>Recomendações:</h2>
+  <ul id="lista-recomendacoes"></ul>
+
+  <script>
+    async function buscarRecomendacoes() {
+      const name = document.getElementById('pokemon-name').value;
+      const topN = document.getElementById('top-n').value;
+      const lista = document.getElementById('lista-recomendacoes');
+      lista.innerHTML = '';
+
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/recomendar?name=${name}&top_n=${topN}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          data.recomendacoes.forEach(pokemon => {
+            const li = document.createElement('li');
+            li.textContent = pokemon;
+            lista.appendChild(li);
+          });
+        } else {
+          alert(data.detail || 'Erro ao buscar recomendações');
+        }
+      } catch (error) {
+        alert('Erro de conexão com o backend');
+      }
+    }
+  </script>
+</body>
+</html>
