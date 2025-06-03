@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    background-size: 400% 400%;
+    animation: gradientMove 10s ease infinite;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #00ffff;
+    text-shadow: 0 0 8px #00ffff;
+}
+
+p {
+    font-size: 14px;
+    margin-bottom: 25px;
+    color: #ccc;
+}
+
+form input[type="text"],
+form input[type="number"] {
+    padding: 12px;
+    margin: 10px;
+    border-radius: 8px;
+    border: 1px solid #00ffff;
+    width: calc(100% - 24px);
+    background-color: #111;
+    color: #0ff;
+    transition: all 0.3s ease;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+}
+
+form input:focus {
+    outline: none;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px #00ffff;
+}
+
+button {
+    padding: 12px 30px;
+    background: #00ffff;
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+}
+
+button:hover {
+    background: #0ff;
+    transform: scale(1.1);
+    box-shadow: 0 0 12px #00ffff;
+}
+
+#results {
+    margin-top: 25px;
+    animation: fadeInUp 1s ease-in-out;
+}
+
+#results ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+#results li {
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 6px;
+    background: rgba(0, 255, 255, 0.1);
+    color: #0ff;
+    font-size: 14px;
+    animation: pulse 2s infinite;
+}
+
+.error {
+    color: #ff4f4f;
+    font-weight: bold;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.9; }
+}

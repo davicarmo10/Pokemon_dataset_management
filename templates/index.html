@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Recommender</title>
+    <link rel="stylesheet" href="\static\style.css">
+    
+</head>
+<body>
+    <div class="container">
+        <h1>TESTE</h1>
+        <p>Insira o nome para receber recomendações semelhantes.</p>
+
+        <form id="recommendForm">
+            <input type="text" id="pokemonName" placeholder="Ex: Pikachu" required>
+            <input type="number" id="topN" placeholder="Número de recomendações" min="1" max="10" value="5">
+            <button type="submit">Recomendar</button>
+        </form>
+
+        <div id="results" class="results"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById("recommendForm");
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const name = document.getElementById("pokemonName").value;
+            const top_n = document.getElementById("topN").value;
+
+            const res = await fetch("http://127.0.0.1:8000/recommend/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ name, top_n: parseInt(top_n) })
+            });
+
+            const data = await res.json();
+            const resultDiv = document.getElementById("results");
+            if (res.ok) {
+                resultDiv.innerHTML = `<h3>Recomendações:</h3><ul>${data.recomendacoes.map(p => `<li>${p}</li>`).join('')}</ul>`;
+            } else {
+                resultDiv.innerHTML = `<p class="error">Erro: ${data.detail}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
