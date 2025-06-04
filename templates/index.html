@@ -2,22 +2,37 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Recommender</title>
-    <link rel="stylesheet" href="\static\style.css">
-    
+    <title>Recomendador de Pokémon</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>TESTE</h1>
-        <p>Insira o nome para receber recomendações semelhantes.</p>
+        <h1>Recomendador de Pokémon</h1>
 
-        <form id="recommendForm">
-            <input type="text" id="pokemonName" placeholder="Ex: Pikachu" required>
-            <input type="number" id="topN" placeholder="Número de recomendações" min="1" max="10" value="5">
-            <button type="submit">Recomendar</button>
-        </form>
+        <section class="recommendation">
+            <h2>Recomendações por nome</h2>
+            <form id="recommendForm">
+                <input type="text" id="pokemonName" placeholder="Ex: Pikachu" required>
+                <input type="number" id="topN" placeholder="Número de recomendações" min="1" max="10" value="5">
+                <button type="submit">Recomendar</button>
+            </form>
+            <div id="results" class="results"></div>
+        </section>
 
-        <div id="results" class="results"></div>
+        <section class="team-section">
+            <h2>Monte seu time</h2>
+            <div class="team-slots">
+                <input type="text" class="team-slot" placeholder="1">
+                <input type="text" class="team-slot" placeholder="2">
+                <input type="text" class="team-slot" placeholder="3">
+                <input type="text" class="team-slot" placeholder="4">
+                <input type="text" class="team-slot" placeholder="5">
+                <input type="text" class="team-slot" placeholder="6">
+            </div>
+            <button id="analyzeTeam">Analisar Time</button>
+            <canvas id="teamChart" width="600" height="400"></canvas>
+        </section>
     </div>
 
     <script>
@@ -29,9 +44,7 @@
 
             const res = await fetch("http://127.0.0.1:8000/recommend/", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, top_n: parseInt(top_n) })
             });
 
@@ -43,6 +56,78 @@
                 resultDiv.innerHTML = `<p class="error">Erro: ${data.detail}</p>`;
             }
         });
+
+         let teamChart = null;
+
+        document.getElementById("analyzeTeam").addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        const names = Array.from(document.querySelectorAll(".team-slot"))
+            .map(input => input.value.trim().toLowerCase())
+            .filter(name => name !== "");
+
+        if (names.length === 0) {
+            alert("Insira pelo menos um Pokémon.");
+            return;
+        }
+
+        const res = await fetch("http://127.0.0.1:8000/team_analysis/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ team: names })
+        });
+
+        const data = await res.json();
+
+        const labels = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"];
+        const values = data.stats;
+
+        const ctx = document.getElementById("teamChart").getContext("2d");
+
+        if (teamChart) {
+            teamChart.data.labels = labels;
+            teamChart.data.datasets[0].data = values;
+            teamChart.update();
+        } else {
+            teamChart = new Chart(ctx, {
+                type: "radar",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Status médios do time",
+                        data: values,
+                        backgroundColor: "rgba(255, 99, 132, 0.2)",
+                        borderColor: "rgba(255, 99, 132, 1)",
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scale: {
+                        ticks: {
+                            beginAtZero: true,
+                            color: "#444"
+                        },
+                        pointLabels: {
+                            color: "#000",
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: "#000"
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
     </script>
 </body>
 </html>

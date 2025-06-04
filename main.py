@@ -7,6 +7,7 @@ from recommender import prepare_data, recommend_pokemon
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
+from typing import List
 
 
 
@@ -14,8 +15,11 @@ app = FastAPI()
 
 # ✅ Definindo o schema da requisição
 class PokemonRequest(BaseModel):
-    name: str
+    name: List[str]
     top_n: int = 10
+
+class TeamRequest(BaseModel):
+    team: List[str]
 
 # ✅ Carregando dados e preparando modelo
 df_pokedex = load_data_pokedex('pokemon_dataset/pokemon_recommender/data/pokemon.csv')
@@ -102,6 +106,15 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+@app.post("/team_analysis/")
+def analyze_team(req: TeamRequest):
+    stats = ['hp', 'attack', 'defense', 'sp.atk', 'sp.def', 'speed']
+    filtered = df_pokedex[df_pokedex['name'].isin(req.team)]
+    if filtered.empty:
+        return {"stats": [0] * len(stats)}
+    mean_stats = filtered[stats].mean().tolist()
+    return {"stats": mean_stats}
 
 
 
