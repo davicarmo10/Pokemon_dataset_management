@@ -15,7 +15,7 @@ app = FastAPI()
 
 # ✅ Definindo o schema da requisição
 class PokemonRequest(BaseModel):
-    name: List[str]
+    name: str
     top_n: int = 10
 
 class TeamRequest(BaseModel):
@@ -29,7 +29,7 @@ X, pokemon_names, model, pipeline = prepare_data(df_pokedex)  # ✅
 @app.post("/recommend/")
 def recomendar(req: PokemonRequest):
     print('requisição recebida:', req)
-    name = req.name
+    name = req.name.lower()
     top_n = req.top_n
 
     if name not in df_pokedex["name"].values:
