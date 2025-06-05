@@ -8,10 +8,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
 from typing import List
-
-
+from authentication import router as auth_router  # <- importa o router de auth.py
 
 app = FastAPI()
+
+app.include_router(auth_router)
 
 # ✅ Definindo o schema da requisição
 class PokemonRequest(BaseModel):
