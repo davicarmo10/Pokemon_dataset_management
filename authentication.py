@@ -1,6 +1,9 @@
-from fastapi.security import APIRouter, OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi import Depends
 from fastapi import HTTPException
+from fastapi import APIRouter
+
+#part not used about authentication
 
 router = APIRouter()
 

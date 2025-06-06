@@ -4,6 +4,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.neighbors import NearestNeighbors
 
+#part of preparation of data using euclidean distance
+
 def prepare_data(df):
     features = ['type1', 'type2', 'hp', 'attack', 'defense', 'sp.atk', 'sp.def', 'speed']
     

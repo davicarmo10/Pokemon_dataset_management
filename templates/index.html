@@ -14,8 +14,8 @@
             <h2>Name</h2>
             <form id="recommendForm">
                 <input type="text" id="pokemonName" placeholder="Ex: Pikachu" required>
-                <input type="number" id="topN" placeholder="Número de recomendações" min="1" max="10" value="5">
-                <button type="submit">Recomendar</button>
+                <input type="number" id="topN" placeholder="Number of recommendation" min="1" max="10" value="5">
+                <button type="submit">recommend</button>
             </form>
             <div id="results" class="results"></div>
         </section>
@@ -30,7 +30,7 @@
                 <input type="text" class="team-slot" placeholder="5">
                 <input type="text" class="team-slot" placeholder="6">
             </div>
-            <button id="analyzeTeam">Analisar Time</button>
+            <button id="analyzeTeam">Analyze Team</button>
             <canvas id="teamChart" width="600" height="400"></canvas>
         </section>
     </div>
@@ -67,7 +67,7 @@
                 .filter(name => name !== "");
 
             if (names.length === 0) {
-                alert("Insira pelo menos um Pokémon.");
+                alert("Insert at least one Pokémon name in the team slots.");
                 return;
             }
 
@@ -96,7 +96,7 @@
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: "Status médios do time",
+                            label: "Mean Stats",
                             data: values,
                             backgroundColor: "rgba(5, 99, 132, 0.2)",
                             borderColor: "rgba(255, 99, 132, 1)",
@@ -108,21 +108,19 @@
                         scale: {
                             // ⇢ Tira os números fora ou deixa, você escolhe:
                             ticks: {
-                            display: true,                 // ← some tudo (quadrado + número)
-                            //Se quiser manter os números, comente a linha acima
-                            //dedescomente as duas de baixo:
-                            backdropColor: 'rgba(255, 99, 132, 0)', // ← quadrado transparente
-                            color: '#7afcae',              // ← cor do texto (opcional)
+                            display: true,                
+                            backdropColor: 'rgba(255, 99, 132, 0)', 
+                            color: '#7afcae',             
                             },
                             pointLabels: {
                             color: 'rgba(0, 99, 132, 0)',
                             font: { size: 14 }
                             },
                             grid: {
-                            color: 'rgba(0, 255, 0, 0)' // cor das linhas do radar (opcional)
+                            color: 'rgba(0, 255, 0, 0)' 
                             },  
                             angleLines: {
-                            color: 'rgba(0, 252, 255, 0)' // linhas radiais (opcional)
+                            color: 'rgba(0, 252, 255, 0)' 
                             }
                         },
                         plugins: {
