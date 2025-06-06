@@ -15,7 +15,8 @@ app = FastAPI()
 #part not used about authentication
 app.include_router(router)
 
-# ✅ Definindo o schema da requisição
+# ✅ setting the reqquired CORS middleware
+# This allows the frontend to make requests to the backend from a different origin. 
 class PokemonRequest(BaseModel):
     name: str
     top_n: int = 10
@@ -23,9 +24,9 @@ class PokemonRequest(BaseModel):
 class TeamRequest(BaseModel):
     team: List[str]
 
-# ✅ Carregando dados e preparando modelo
+# ✅ loading the pokedex data and preparing the model
 df_pokedex = load_data_pokedex('pokemon_dataset/pokemon_recommender/data/pokemon.csv')
-df_pokedex["name"] = df_pokedex["name"].str.lower()  # Normalizando os nomes dos Pokémon
+df_pokedex["name"] = df_pokedex["name"].str.lower()  # Normaylizing Pokémon names to lowercase
 X, pokemon_names, model, pipeline = prepare_data(df_pokedex)  # ✅
 
 @app.post("/recommend/")
@@ -39,11 +40,11 @@ def recomendar(req: PokemonRequest):
     
     recommended = recommend_pokemon(name, top_n, df_pokedex, X, pokemon_names, model)
 
-    return {"recommendation": recommended}
+    return {"recommendations": recommended}
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Permite todas as origens
+    allow_origins=["*"],  # accept requests from any origin, only for development purposes
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -100,7 +101,7 @@ def home():
     </html>
     """
 '''
-# Configura pasta de arquivos estáticos e templates
+# configuring static files and templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
@@ -117,7 +118,3 @@ def analyze_team(req: TeamRequest):
         return {"stats": [0] * len(stats)}
     mean_stats = filtered[stats].mean().tolist()
     return {"stats": mean_stats}
-
-
-
-

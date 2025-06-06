@@ -45,13 +45,13 @@
             const res = await fetch("http://127.0.0.1:8000/recommend/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, top_n: parseInt(top_n), team: [] })
+                body: JSON.stringify({ name, top_n: parseInt(top_n)})
             });
 
             const data = await res.json();
             const resultDiv = document.getElementById("results");
             if (res.ok) {
-                resultDiv.innerHTML = `<h3>Recomendações:</h3><ul>${data.recomendacoes.map(p => `<li>${p}</li>`).join('')}</ul>`;
+                resultDiv.innerHTML = `<h3>Recommendations:</h3><ul>${data.recommendations.map(p => `<li>${p}</li>`).join('')}</ul>`;
             } else {
                 resultDiv.innerHTML = `<p class="error">Erro: ${data.detail}</p>`;
             }
